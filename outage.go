@@ -1,10 +1,12 @@
 package outage
 
 import (
+	"fmt"
 	"os"
 	"os/signal"
 
 	"github.com/alecthomas/kong"
+	"github.com/cmj0121/outage/status"
 	"github.com/cmj0121/outage/web"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -21,6 +23,11 @@ type Agent struct {
 	Version Version `short:"V" help:"Show version info"`
 
 	*web.Web
+
+	Config *status.Config `group:"config" xor:"config" short:"c" help:"The task config settings"`
+	Fake   bool           `group:"config" xor:"config" short:"F" help:"load the fake config"`
+
+	Action string `arg:"" default:"server" enum:"server,dump" help:"run as"`
 }
 
 func New() (agent *Agent) {
@@ -44,14 +51,28 @@ func (agent *Agent) Run() (err error) {
 }
 
 func (agent *Agent) run() (err error) {
-	err = agent.ServeHTTP()
+	switch agent.Action {
+	case "dump":
+		fmt.Println(agent.Config)
+	case "server":
+		err = agent.ServeHTTP()
+	}
+
+	log.Trace().Err(err).Msg("agent stoped")
 	return
 }
 
 func (agent *Agent) prologue() {
 	log.Info().Msg("starting prologue")
+
 	agent.setup_logger()
 	agent.setup_graceful_shutdown()
+
+	if agent.Fake {
+		log.Warn().Msg("load the fake config")
+		agent.Config = status.Fake()
+	}
+
 	log.Info().Msg("finished prologue")
 }
 

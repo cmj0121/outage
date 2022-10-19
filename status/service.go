@@ -23,7 +23,7 @@ type Meta struct {
 
 // / The service meta and status
 type Service struct {
-	Meta Meta `yaml:",inline"`
+	Meta `json:",inline" yaml:",inline"`
 
 	Mode Mode `yaml:",omitempty"`
 
