@@ -4,32 +4,35 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/cmj0121/outage/status"
 	"github.com/gorilla/mux"
 	"github.com/rs/zerolog/log"
 )
 
 type Web struct {
-	closed      <-chan struct{}
-	*mux.Router `kong:"-"`
+	closed <-chan struct{}
+
+	*mux.Router    `kong:"-"`
+	*status.Config `kong:"-"`
 
 	Bind string `short:"b" default:"127.0.0.1:9999" help:"the address bind to"`
 }
 
-func New(closed <-chan struct{}) (web *Web) {
+func New(closed <-chan struct{}, config *status.Config) (web *Web) {
 	web = &Web{
 		closed: closed,
 
 		Router: mux.NewRouter(),
-		Bind:   "127.0.0.1:9999",
+		Config: config,
+
+		Bind: "127.0.0.1:9999",
 	}
 
 	web.Use(web.MiddlewareLog)
 	web.HandleFunc("/", web.IndexPage)
+	web.HandleFunc("/service", web.Response(web.Config.Services))
+	web.HandleFunc("/summary", web.Response(web.Config.Summary))
 	return
-}
-
-func (web *Web) IndexPage(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
 }
 
 func (web *Web) ServeHTTP() (err error) {
