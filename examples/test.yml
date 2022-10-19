@@ -1,0 +1,19 @@
+interval: 1s
+
+setting:
+  sampling: 1h0m0s
+  timeout: 1m0s
+
+services:
+  - title: example on
+    subject: The example ON service
+    link: https://example.com/on
+  - title: example off
+    subject: The example OFF service
+    link: https://example.com/off
+  - title: example incident
+    subject: The example INCIDENT service
+    link: https://example.com/incident
+  - title: example default
+    subject: The example UNKNOWN service
+    link: https://example.com/unknown

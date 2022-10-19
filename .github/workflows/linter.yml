@@ -1,0 +1,27 @@
+name: Lint
+
+on:
+  - pull_request
+  - push
+
+jobs:
+  linter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-python@v2
+      - uses: actions/setup-go@v3
+        with:
+          go-version: "1.19"
+      - name: pre-commit
+        run: |
+          python -m pip install pre-commit
+          SKIP=hadolint pre-commit run --all-files
+      - name: go test and build
+        run: |
+          go version
+          go get
+          gofmt -d -s .
+          go test -cover -failfast -timeout 2s ./...
