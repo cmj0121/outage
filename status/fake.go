@@ -49,6 +49,7 @@ func Fake() (config *Config) {
 				},
 			},
 		},
+		Summary: map[string][]*Service{},
 	}
 
 	config.epologue()

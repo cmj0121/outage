@@ -2,8 +2,10 @@ package status
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"os"
+	"time"
 
 	"github.com/rs/zerolog/log"
 	"gopkg.in/yaml.v3"
@@ -81,4 +83,10 @@ func (config *Config) epologue() {
 			}
 		}
 	}
+}
+
+func (config *Config) Footer() (footer string) {
+	now := time.Now()
+	footer = fmt.Sprintf("Copyright (C) 2022-%d cmj@cmj.tw", now.Year())
+	return
 }
