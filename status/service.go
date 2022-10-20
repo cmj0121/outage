@@ -27,7 +27,7 @@ type Service struct {
 
 	Mode Mode `yaml:",omitempty"`
 
-	UpdatedAt *time.Time `yaml:",omitempty"`
+	UpdatedAt time.Time `yaml:",omitempty"`
 }
 
 func (svc Service) String() (raw string) {
