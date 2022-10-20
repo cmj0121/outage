@@ -27,7 +27,7 @@ type Agent struct {
 	Config *status.Config `group:"config" xor:"config" short:"c" help:"The task config settings"`
 	Fake   bool           `group:"config" xor:"config" short:"F" help:"load the fake config"`
 
-	Action string `arg:"" default:"server" enum:"server,dump" help:"run as"`
+	Action string `arg:"" default:"server" enum:"server,dump,fetch" help:"run as"`
 }
 
 func New() (agent *Agent) {
@@ -52,6 +52,8 @@ func (agent *Agent) run() (err error) {
 	switch agent.Action {
 	case "dump":
 		fmt.Println(agent.Config)
+	case "fetch":
+		err = agent.Config.Fetch(agent.closed)
 	case "server":
 		err = agent.ServeHTTP()
 	}
