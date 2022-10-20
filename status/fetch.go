@@ -6,20 +6,23 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func (config *Config) Fetch(closed <-chan struct{}) (err error) {
+func (config *Config) Fetch(closed <-chan struct{}, worker int) (err error) {
 	ticker := time.NewTicker(time.Duration(config.Interval))
 	defer ticker.Stop()
 
-	ch := make(chan *Service, 1)
+	ch := make(chan *Service, worker)
 	defer close(ch)
-	go config.worker(closed, ch)
+	for n := 0; n < worker; n++ {
+		log.Debug().Int("worker", n).Msg("create service worker")
+		go config.worker(closed, ch)
+	}
 
 	for {
 		select {
 		case <-closed:
 			return
 		case <-ticker.C:
-			log.Debug().Msg("tick")
+			log.Trace().Msg("tick")
 
 			now := time.Now().UTC()
 			for _, service := range config.Services {
