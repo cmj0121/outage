@@ -30,7 +30,7 @@ func New(closed <-chan struct{}, config *status.Config) (web *Web) {
 
 	web.Use(web.MiddlewareLog)
 	web.HandleFunc("/", web.IndexPage)
-	web.HandleFunc("/service", web.Response(web.Config.Services))
+	web.HandleFunc("/service", web.Response(web.Config))
 	web.HandleFunc("/summary", web.Response(web.Config.Summary))
 	return
 }
