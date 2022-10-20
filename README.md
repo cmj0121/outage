@@ -1,4 +1,4 @@
-# Phase
+# Outage
 
 > service monitor
 
