@@ -1,0 +1,19 @@
+server {
+    listen      80;
+    listen      443 ssl;
+    server_name outage.cmj.tw;
+    root        /dev/null;
+
+    charset     utf-8;
+    error_log   /var/log/nginx/error.log;
+
+    ssl_certificate         /etc/letsencrypt/live/outage.cmj.tw/fullchain.pem;
+    ssl_certificate_key     /etc/letsencrypt/live/outage.cmj.tw/privkey.pem;
+
+    location ~ / {
+        proxy_pass http://127.0.0.1:9999;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}

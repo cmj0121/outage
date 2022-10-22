@@ -17,3 +17,26 @@ steps:
       - go get
       - gofmt -d -s .
       - go test -cover -failfast -timeout 2s ./...
+  - name: build docker image
+    image: plugins/docker
+    settings:
+      repo: registry.cmj.tld/cmj/outage
+      registry: registry.cmj.tld
+      insecure: true
+      purge: true
+      tags:
+        - latest
+        - "${DRONE_COMMIT_SHA:0:8}"
+  - name: deploy on server
+    image: plugins/ansible:3
+    environment:
+      ANSIBLE_HOST_KEY_CHECKING: "False"
+    settings:
+      playbook: deployment/playbooks/upgrade.yml
+      galaxy: deployment/playbooks/requirements.yml
+      inventory: deployment/playbooks/inventory.ini
+      galaxy_force: true
+      user:
+        from_secret: DEPLOY_USERNAME
+      private_key:
+        from_secret: DEPLOY_PRIVATE_KEY

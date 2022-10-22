@@ -1,0 +1,27 @@
+---
+- name: setup nginx
+
+  hosts: all
+
+  tasks:
+    - name: copy the nginx file
+      copy:
+        src: blog.nginx
+        dest: /etc/nginx/site-enabled/outage.cmj.tw
+        force: true
+        mode: 0640
+    - name: copy the docker-compose file
+      copy:
+        src: docker-compose.yml
+        dest: /srv/docker-compose/outage.yml
+        force: true
+        mode: 0640
+    - name: start docker-compose service
+      community.docker.docker_compose:
+        build: no
+        restarted: yes
+        files: outage.yml
+        project_src: /srv/docker-compose/
+      register: output
+    - debug:
+        var: output

@@ -1,0 +1,9 @@
+version: "3.7"
+
+services:
+  blog:
+    image: registry.cmj.tld/cmj/outage
+    platform: linux/amd64
+    restart: always
+    ports:
+      - "127.0.0.1:9999:9999"
