@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
       - uses: robotology/gh-action-nightly-merge@v1.3.3
         with:
           stable_branch: "stage"
