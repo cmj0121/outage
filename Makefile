@@ -14,7 +14,7 @@ test:			# run test
 	$(GO) test -cover -failfast -timeout 2s ./...
 
 run: $(BIN)		# run in the local environment
-	./$(BIN)
+	./$(BIN) -Fpvvv
 
 build: $(BIN)	# build the binary/library
 
@@ -33,3 +33,14 @@ $(BIN): test
 %: %.go
 	$(GO) mod tidy
 	$(GO) build -ldflags="-s -w" -o $@ $<
+
+.PHONY: stop image log
+log:			# show the logs inside docker
+	docker-compose logs -f
+
+stop:			# stop the docker running
+	docker-compose stop
+
+image:			# build the docker image
+	docker-compose stop
+	docker-compose up --build -d

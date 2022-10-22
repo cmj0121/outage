@@ -4,3 +4,5 @@ BIN := $(subst .go,,$(OBJ))
 
 GO := go
 GOFMT := gofmt
+
+RELEASE := $(shell git rev-parse --short HEAD)
