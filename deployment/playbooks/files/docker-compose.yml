@@ -1,7 +1,7 @@
 version: "3.7"
 
 services:
-  blog:
+  outage:
     image: registry.cmj.tld/cmj/outage
     platform: linux/amd64
     restart: always

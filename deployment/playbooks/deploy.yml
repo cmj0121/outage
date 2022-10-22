@@ -6,7 +6,7 @@
   tasks:
     - name: copy the nginx file
       copy:
-        src: blog.nginx
+        src: outage.nginx
         dest: /etc/nginx/site-enabled/outage.cmj.tw
         force: true
         mode: 0640
