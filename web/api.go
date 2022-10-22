@@ -19,6 +19,7 @@ var (
 	TemplateFuncMap = template.FuncMap{
 		"safe_tag": func(raw string) (str string) {
 			str = strings.ReplaceAll(raw, " ", "_")
+			str = strings.ReplaceAll(str, "/", "_")
 			str = strings.ToLower(str)
 			return
 		},
