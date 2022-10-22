@@ -30,7 +30,7 @@ func (config *Config) Fetch(closed <-chan struct{}, worker int) (err error) {
 				case service.UpdatedAt.IsZero():
 					log.Debug().Str("service", service.Title).Msg("first blood")
 					ch <- service
-				case now.After(service.UpdatedAt.Add(time.Duration(10 * time.Second))):
+				case now.After(service.UpdatedAt.Add(time.Duration(config.Setting.Sampling))):
 					log.Debug().Str("service", service.Title).Msg("need update")
 					ch <- service
 				default:
