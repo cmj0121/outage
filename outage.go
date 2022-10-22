@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"runtime"
 
 	"github.com/alecthomas/kong"
 	"github.com/cmj0121/outage/status"
@@ -27,7 +28,8 @@ type Agent struct {
 	Config *status.Config `group:"config" xor:"config" short:"c" help:"The task config settings"`
 	Fake   bool           `group:"config" xor:"config" short:"F" help:"load the fake config"`
 
-	Action string `arg:"" default:"server" enum:"server,dump" help:"run as"`
+	Workers int    `short:"w" default:"${numcpu}" help:"number of workers"`
+	Action  string `arg:"" default:"server" enum:"server,dump,fetch" help:"run as"`
 }
 
 func New() (agent *Agent) {
@@ -40,7 +42,10 @@ func New() (agent *Agent) {
 func (agent *Agent) Run() (err error) {
 	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
 
-	kong.Parse(agent)
+	kong.Parse(agent,
+		kong.Vars{
+			"numcpu": fmt.Sprintf("%d", runtime.NumCPU()),
+		})
 	agent.prologue()
 	defer agent.epologue()
 
@@ -52,7 +57,15 @@ func (agent *Agent) run() (err error) {
 	switch agent.Action {
 	case "dump":
 		fmt.Println(agent.Config)
+	case "fetch":
+		err = agent.Config.Fetch(agent.closed, agent.Workers)
 	case "server":
+		go func() {
+			if err := agent.Config.Fetch(agent.closed, agent.Workers); err != nil {
+				log.Warn().Err(err).Msg("cannot run fetch")
+				return
+			}
+		}()
 		err = agent.ServeHTTP()
 	}
 

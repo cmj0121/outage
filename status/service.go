@@ -1,6 +1,8 @@
 package status
 
 import (
+	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/rs/zerolog/log"
@@ -27,7 +29,7 @@ type Service struct {
 
 	Mode Mode `yaml:",omitempty"`
 
-	UpdatedAt *time.Time `yaml:",omitempty"`
+	UpdatedAt time.Time `yaml:",omitempty"`
 }
 
 func (svc Service) String() (raw string) {
@@ -40,4 +42,49 @@ func (svc Service) String() (raw string) {
 
 	raw = string(data)
 	return
+}
+
+func (svc *Service) Fetch() {
+	svc.UpdatedAt = time.Now().UTC()
+
+	parse_url, err := url.Parse(svc.Link)
+	if err != nil {
+		log.Error().Err(err).Msg("invalid link")
+		return
+	}
+
+	switch scheme := parse_url.Scheme; scheme {
+	case "http", "https":
+		client := &http.Client{
+			// not follow the redirect
+			CheckRedirect: func(req *http.Request, via []*http.Request) error {
+				return http.ErrUseLastResponse
+			},
+		}
+
+		resp, err := client.Get(svc.Link)
+		switch {
+		case err != nil:
+			log.Warn().Err(err).Msg("HTTP GET failure")
+			svc.Mode = OFF
+		case resp.StatusCode >= http.StatusInternalServerError:
+			log.Warn().Str("link", svc.Link).Str("status", resp.Status).Msg("HTTP GET fail")
+			svc.Mode = OFF
+		case resp.StatusCode >= http.StatusBadRequest:
+			log.Warn().Str("link", svc.Link).Str("status", resp.Status).Msg("HTTP GET denied")
+			svc.Mode = INCIDENT
+		case resp.StatusCode >= http.StatusBadRequest:
+			log.Info().Str("link", svc.Link).Str("status", resp.Status).Msg("HTTP GET redirect")
+			svc.Mode = INCIDENT
+		case resp.StatusCode >= http.StatusOK:
+			log.Info().Str("link", svc.Link).Str("status", resp.Status).Msg("HTTP GET success")
+			svc.Mode = ON
+		default:
+			log.Warn().Str("link", svc.Link).Str("status", resp.Status).Msg("HTTP GET unknown")
+			svc.Mode = UNKNOWN
+		}
+	default:
+		log.Warn().Str("scheme", scheme).Msg("not implemented scheme")
+		return
+	}
 }
