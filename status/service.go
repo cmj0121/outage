@@ -29,7 +29,7 @@ type Service struct {
 
 	Mode Mode `json:"mode" yaml:",omitempty"`
 
-	UpdatedAt time.Time `json:"updated_at" yaml:",omitempty"`
+	UpdatedAt Timestamp `json:"updated_at" yaml:",omitempty"`
 }
 
 func (svc Service) String() (raw string) {
@@ -45,7 +45,7 @@ func (svc Service) String() (raw string) {
 }
 
 func (svc *Service) Fetch() {
-	svc.UpdatedAt = time.Now().UTC()
+	svc.UpdatedAt = Timestamp(time.Now())
 
 	parse_url, err := url.Parse(svc.Link)
 	if err != nil {
