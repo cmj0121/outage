@@ -60,6 +60,12 @@ func (agent *Agent) run() (err error) {
 	case "fetch":
 		err = agent.Config.Fetch(agent.closed, agent.Workers)
 	case "server":
+		go func() {
+			if err := agent.Config.Fetch(agent.closed, agent.Workers); err != nil {
+				log.Warn().Err(err).Msg("cannot run fetch")
+				return
+			}
+		}()
 		err = agent.ServeHTTP()
 	}
 
