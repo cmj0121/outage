@@ -7,7 +7,7 @@ setting:
 services:
   - title: example on
     subject: The example ON service
-    link: https://example.com/on
+    link: https://example.com
   - title: example off
     subject: The example OFF service
     link: https://example.com/off

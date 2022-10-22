@@ -18,7 +18,7 @@ func Fake() (config *Config) {
 				Meta: Meta{
 					Title:   "example",
 					Subject: "The example service",
-					Link:    "https://example.com/on",
+					Link:    "https://example.com",
 					Tags: []string{
 						"Group 1",
 						"Group 2",

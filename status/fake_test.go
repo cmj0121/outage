@@ -16,7 +16,7 @@ func ExampleFake() {
 	// services:
 	//     - title: example
 	//       subject: The example service
-	//       link: https://example.com/on
+	//       link: https://example.com
 	//       tags:
 	//         - Group 1
 	//         - Group 2
@@ -38,7 +38,7 @@ func ExampleFake() {
 	//     Group 1:
 	//         - title: example
 	//           subject: The example service
-	//           link: https://example.com/on
+	//           link: https://example.com
 	//           tags:
 	//             - Group 1
 	//             - Group 2
@@ -59,7 +59,7 @@ func ExampleFake() {
 	//     Group 2:
 	//         - title: example
 	//           subject: The example service
-	//           link: https://example.com/on
+	//           link: https://example.com
 	//           tags:
 	//             - Group 1
 	//             - Group 2

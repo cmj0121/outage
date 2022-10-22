@@ -48,9 +48,7 @@ func (config *Config) worker(closed <-chan struct{}, c <-chan *Service) {
 			return
 		case service := <-c:
 			log.Info().Str("service", service.Title).Msg("process service")
-
-			now := time.Now().UTC()
-			service.UpdatedAt = now
+			service.Fetch()
 		}
 	}
 }
