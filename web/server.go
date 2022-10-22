@@ -10,7 +10,7 @@ import (
 )
 
 type Web struct {
-	closed <-chan struct{}
+	closed <-chan struct{} `kong:"-"`
 
 	*mux.Router    `kong:"-"`
 	*status.Config `kong:"-"`
@@ -18,24 +18,23 @@ type Web struct {
 	Bind string `short:"b" default:"127.0.0.1:9999" help:"the address bind to"`
 }
 
-func New(closed <-chan struct{}, config *status.Config) (web *Web) {
+func New(closed <-chan struct{}) (web *Web) {
 	web = &Web{
 		closed: closed,
 
 		Router: mux.NewRouter(),
-		Config: config,
 
 		Bind: "127.0.0.1:9999",
 	}
-
-	web.Use(web.MiddlewareLog)
-	web.HandleFunc("/", web.IndexPage)
-	web.HandleFunc("/service", web.Response(web.Config))
-	web.HandleFunc("/summary", web.Response(web.Config.Summary))
 	return
 }
 
 func (web *Web) ServeHTTP() (err error) {
+	web.Use(web.MiddlewareLog)
+	web.HandleFunc("/", web.IndexPage)
+	web.HandleFunc("/service", web.Response(web.Config))
+	web.HandleFunc("/summary", web.Response(web.Config.Summary))
+
 	srv := http.Server{
 		Addr:    web.Bind,
 		Handler: web.Router,
