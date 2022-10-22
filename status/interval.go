@@ -47,3 +47,7 @@ func (interval Interval) MarshalYAML() (interface{}, error) {
 	duration := time.Duration(interval)
 	return duration.String(), nil
 }
+
+func (interval Interval) Milliseconds() int64 {
+	return time.Duration(interval).Milliseconds()
+}
