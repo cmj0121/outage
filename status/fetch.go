@@ -24,13 +24,13 @@ func (config *Config) Fetch(closed <-chan struct{}, worker int) (err error) {
 		case <-ticker.C:
 			log.Trace().Msg("tick")
 
-			now := time.Now().UTC()
+			now := Timestamp(time.Now())
 			for _, service := range config.Services {
 				switch {
 				case service.UpdatedAt.IsZero():
 					log.Debug().Str("service", service.Title).Msg("first blood")
 					ch <- service
-				case now.After(service.UpdatedAt.Add(time.Duration(config.Setting.Sampling))):
+				case now.After(service.UpdatedAt.Add(config.Setting.Sampling)):
 					log.Debug().Str("service", service.Title).Msg("need update")
 					ch <- service
 				default:
