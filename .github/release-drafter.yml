@@ -1,0 +1,13 @@
+tag-template: "v$RESOLVED_VERSION"
+categories:
+  - title: "Features"
+    labels:
+      - "feat"
+      - "chore"
+  - title: "Bug Fixes"
+    labels:
+      - "fix"
+template: |
+  ## What’s Changed
+
+  $CHANGES

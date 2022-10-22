@@ -23,7 +23,7 @@ type Agent struct {
 
 	Version Version `short:"V" help:"Show version info"`
 
-	*web.Web `kong:"-"`
+	*web.Web
 
 	Config *status.Config `group:"config" xor:"config" short:"c" help:"The task config settings"`
 	Fake   bool           `group:"config" xor:"config" short:"F" help:"load the fake config"`
@@ -36,6 +36,7 @@ func New() (agent *Agent) {
 	agent = &Agent{
 		closed: make(chan struct{}),
 	}
+	agent.Web = web.New(agent.closed)
 	return
 }
 
@@ -84,7 +85,7 @@ func (agent *Agent) prologue() {
 		agent.Config = status.Fake()
 	}
 
-	agent.Web = web.New(agent.closed, agent.Config)
+	agent.Web.Config = agent.Config
 	log.Info().Msg("finished prologue")
 }
 
