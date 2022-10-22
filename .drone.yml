@@ -19,6 +19,9 @@ steps:
       - go test -cover -failfast -timeout 2s ./...
   - name: build docker image
     image: plugins/docker
+    when:
+      branch:
+        - master
     settings:
       repo: registry.cmj.tld/cmj/outage
       registry: registry.cmj.tld
@@ -31,6 +34,9 @@ steps:
     image: plugins/ansible:3
     environment:
       ANSIBLE_HOST_KEY_CHECKING: "False"
+    when:
+      ref:
+        - refs/tags/v*
     settings:
       playbook: deployment/playbooks/upgrade.yml
       galaxy: deployment/playbooks/requirements.yml
