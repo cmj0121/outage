@@ -1,0 +1,17 @@
+interval: 1s
+
+setting:
+  sampling: 1h0m0s
+  timeout: 1m0s
+
+services:
+  - title: Blog
+    subject: The self-hosting blogger
+    link: https://blog.cmj.tw
+    tags:
+      - self-hosting
+  - title: GitHub Repo
+    subject: The project repository
+    link: https://github.com/cmj0121/outage
+    tags:
+      - DEV
