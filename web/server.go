@@ -32,8 +32,8 @@ func New(closed <-chan struct{}) (web *Web) {
 func (web *Web) ServeHTTP() (err error) {
 	web.Use(web.MiddlewareLog)
 	web.HandleFunc("/", web.IndexPage)
-	web.HandleFunc("/service", web.Response(web.Config))
-	web.HandleFunc("/summary", web.Response(web.Config.Summary))
+	web.HandleFunc("/api/service", web.Response(web.Config.Services))
+	web.HandleFunc("/api/summary", web.Response(web.Config.Summary))
 
 	srv := http.Server{
 		Addr:    web.Bind,
