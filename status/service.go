@@ -11,13 +11,13 @@ import (
 
 type Meta struct {
 	// the title of the service
-	Title string
+	Title string `json:"title"`
 
 	// the brief of service
-	Subject string
+	Subject string `json:"subject"`
 
 	// the service link
-	Link string
+	Link string `json:"link"`
 
 	// the service tags
 	Tags []string `json:"tags,omitempty" yaml:"tags,omitempty"`
@@ -27,9 +27,9 @@ type Meta struct {
 type Service struct {
 	Meta `json:",inline" yaml:",inline"`
 
-	Mode Mode `yaml:",omitempty"`
+	Mode Mode `json:"mode" yaml:",omitempty"`
 
-	UpdatedAt time.Time `yaml:",omitempty"`
+	UpdatedAt Timestamp `json:"updated_at" yaml:",omitempty"`
 }
 
 func (svc Service) String() (raw string) {
@@ -45,7 +45,7 @@ func (svc Service) String() (raw string) {
 }
 
 func (svc *Service) Fetch() {
-	svc.UpdatedAt = time.Now().UTC()
+	svc.UpdatedAt = Timestamp(time.Now())
 
 	parse_url, err := url.Parse(svc.Link)
 	if err != nil {

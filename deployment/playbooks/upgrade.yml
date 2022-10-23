@@ -1,0 +1,28 @@
+---
+- name:
+
+  hosts: all
+
+  tasks:
+    - name: copy the docker-compose file
+      copy:
+        src: docker-compose.yml
+        dest: /srv/docker-compose/outage.yml
+        force: true
+        mode: 0640
+    - name: install necessary python packages
+      pip:
+        name:
+          - docker
+          - docker-compose
+    - name: start docker-compose service
+      community.general.docker_compose:
+        files: outage.yml
+        project_src: /srv/docker-compose/
+        build: yes
+        nocache: yes
+        pull: yes
+        recreate: always
+      register: output
+    - debug:
+        var: output

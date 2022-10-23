@@ -27,6 +27,11 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     ></script>
+    <script
+      src="https://code.jquery.com/jquery-3.6.1.min.js"
+      integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ="
+      crossorigin="anonymous"
+    ></script>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
@@ -187,5 +192,75 @@
     <footer class="w-100 fixed-bottom text-center text-muted overflow-hidden">
       {{- .Footer -}}
     </footer>
+
+    <script>
+      function service_status(mode) {
+        switch (mode) {
+          case "on":
+            return `<i class="text-success fa-shard fa-solid fa-circle-check float-end"></i>`;
+            break;
+          case "off":
+            return `<i class="text-danger fa-solid fa-ban float-end"></i>`;
+            break;
+          case "incident":
+            return `<i class="text-warning fa-solid fa-car-on float-end"></i>`;
+            break;
+          default:
+            return `<i class="text-muted fa-sharp fa-solid fa-circle-question float-end"></i>`;
+            break;
+        }
+      }
+
+      function rerender(name, services) {
+        $(name).find(".card").remove();
+
+        services.forEach((service) => {
+          var mode = service_status(service.mode);
+          var dom = `
+            <div class="card p-2 col-6">
+              <div class="card-body">
+                <div>
+                  <div class="card-title d-inline h4">${service.title}</div>
+
+                  <a
+                    class="mx-2"
+                    href="${service.link}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><i class="fa-solid fa-link"></i
+                  ></a>
+
+                  ${mode}
+                </div>
+              </div>
+
+              <div class="card-text">
+                ${service.subject}
+                <div class="text-muted float-end small">${service.updated_at}</div>
+              </div>
+            </div>
+          `;
+
+          $(name).find(".row").append(dom);
+        });
+      }
+
+      function reload() {
+        fetch("/api/service")
+          .then((resp) => resp.json())
+          .then((data) => rerender("#tab-services", data));
+
+        fetch("/api/summary")
+          .then((resp) => resp.json())
+          .then((data) => {
+            Object.keys(data).forEach((key) => {
+              name = key.toLowerCase().replace(" ", "_").replace("/", "_");
+              rerender(`#tab-${name}`, data[key]);
+            });
+          });
+      }
+
+      setInterval(reload, 5 * 60 * 1000);
+    </script>
   </body>
 </html>
