@@ -16,6 +16,16 @@
         dest: /srv/docker-compose/outage.yml
         force: true
         mode: 0640
+    - name: ensure settings folder
+      file:
+        path: /srv/docker-compose/outage
+        state: directory
+    - name: copy service settings
+      copy:
+        src: conf.yml
+        dest: /srv/docker-compose/outage/conf.yml
+        force: true
+        mode: 0640
     - name: start docker-compose service
       community.docker.docker_compose:
         build: no
